@@ -29,9 +29,9 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Databaseのカラム情報。
+ * database column information.
  *
- * @author tamura shingo
+ * @author tamura shingo (tamura.shingo at gmail.com)
  *
  */
 @Target(ElementType.FIELD)

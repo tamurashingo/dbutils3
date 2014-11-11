@@ -37,10 +37,10 @@ import java.util.Map.Entry;
 import java.util.Set;
 
 /**
- * Beanに定義されたDatabaseのカラム名と型情報を元に、{@link ResultSet}から値を取得しBeanに設定する処理を生成、保持する。
+ * This class generate {@link AbstractSetter} from database column name and {@link ResultSet}.
  *
  * <p>
- * 以下のBeanがあった場合
+ * when specified following bean,
  * </p>
  * <p>
  * <code><pre>
@@ -54,13 +54,13 @@ import java.util.Set;
  *     &#064:Column("valid")
  *     private boolean validFlag;
  *
- *     // setter/getterは省略
+ *     // setter/getter
  *     ...
  * }
  * </pre></code>
  * </p>
  * <p>
- * 以下のようなセット処理を生成する。
+ * generate following setter process.
  * </p>
  * <p>
  * <table>
@@ -96,16 +96,23 @@ import java.util.Set;
  * </table>
  * </p>
  *
- * @author tamura shingo
+ * @author tamura shingo (tamura.shingo at gmail.com)
  *
  */
 public class Mapper {
 
-    /** Databaseカラム名とそれに対応するBeanへのsetterのMap */
+    /**
+     * <dl>
+     *   <dt>String</dt>
+     *   <dd>database column name</dd>
+     *   <dt>AbstractSetrer</dt>
+     *   <dd>setter for bean field</dd>
+     * </dl>
+     */
     private Map<String, AbstractSetter> mapper = new HashMap<>();
 
     /**
-     * Beanに定義されたDatabaseカラム名とそれに対応するフィールドへのsetterのMapを作成する。
+     * create setter for bean fields and its database column name.
      *
      * @param cls Bean
      */
@@ -153,52 +160,57 @@ public class Mapper {
                 mapper.put(column.value(), invoker);
             }
             catch (IntrospectionException ex) {
-                // setterの取得に失敗した場合は、そのフィールドへのセットを行わない
+                // nothing to set when exception has occurred.
             }
         }
     }
 
+    /**
+     * return entry set that contains database column name and its setter.
+     * 
+     * @return entryset
+     */
     public Set<Entry<String, AbstractSetter>> entrySet() {
         return this.mapper.entrySet();
     }
 
     /**
-     * {@link ResultSet}から指定したカラムの値を取得しBeanへセットを行う抽象クラス。
+     * get the value from {@link ResultSet} and set to bean field.
      *
-     * @author tamura shingo
+     * @author tamura shingo (tamura.shingo at gmail.com)
      *
      */
     static abstract class AbstractSetter {
         protected Method setter;
 
         /**
-         * コンストラクタ。
+         * constructor.
          *
-         * @param setter Beanのsetterメソッド
+         * @param setter bean's setter method
          */
         protected AbstractSetter(Method setter) {
             this.setter = setter;
         }
 
         /**
-         * {@link ResultSet}から指定した型で値を取得し、Beanへセットする。
+         * get the correct typed value from {@link ResultSet} and set to bean.
          *
-         * @param beanInst　Beanのインスタンス
-         * @param rs Databaseから取得したResultSet
-         * @param columnName カラム名
-         * @throws IllegalAccessException 例外発生時
-         * @throws IllegalArgumentException 例外発生時
-         * @throws InvocationTargetException 例外発生時
-         * @throws SQLException 例外発生時
+         * @param beanInst　instance of bean
+         * @param rs {@link ResultSet} from database
+         * @param columnName column name
+         * @throws IllegalAccessException exception has occurred.
+         * @throws IllegalArgumentException exception has occurred.
+         * @throws InvocationTargetException exception has occurred.
+         * @throws SQLException exception has occurred.
          */
         public abstract void invoke(Object beanInst, ResultSet rs, String columnName) throws IllegalAccessException,
         IllegalArgumentException, InvocationTargetException, SQLException; 
     }
 
     /**
-     * Databaseからboolean型の値を取得する実装クラス。
+     * implementation class to get/set boolean typed value.
      *
-     * @author tamura shingo
+     * @author tamura shingo (tamura.shingo at gmail.com)
      *
      */
     static class BooleanSetter extends AbstractSetter {
@@ -215,9 +227,9 @@ public class Mapper {
     }
 
     /**
-     * Databaseからbyte型の値を取得する実装クラス。
+     * implementation class to get/set byte typed value.
      *
-     * @author tamura shingo
+     * @author tamura shingo (tamura.shingo at gmail.com)
      *
      */
     static class ByteSetter extends AbstractSetter {
@@ -234,9 +246,9 @@ public class Mapper {
     }
 
     /**
-     * Databaseからjava.util.Date型の値を取得する実装クラス。
+     * implementation class to get/set java.util.Date typed value.
      *
-     * @author tamura shingo
+     * @author tamura shingo (tamura.shingo at gmail.com)
      *
      */
     static class DateSetter extends AbstractSetter {
@@ -253,9 +265,9 @@ public class Mapper {
     }
 
     /**
-     * Databaseからdouble型の値を取得する実装クラス。
+     * implementation class to get/set double typed value.
      *
-     * @author tamura shingo
+     * @author tamura shingo (tamura.shingo at gmail.com)
      *
      */
     static class DoubleSetter extends AbstractSetter {
@@ -272,9 +284,9 @@ public class Mapper {
     }
 
     /**
-     * Databaseからfloat型の値を取得する実装クラス。
+     * implementation class to get/set float typed value.
      *
-     * @author tamura shingo
+     * @author tamura shingo (tamura.shingo at gmail.com)
      *
      */
     static class FloatSetter extends AbstractSetter {
@@ -291,9 +303,9 @@ public class Mapper {
     }
 
     /**
-     * Databaseからint型の値を取得する実装クラス。
+     * implementation class to get/set int typed value.
      *
-     * @author tamura shingo
+     * @author tamura shingo (tamura.shingo at gmail.com)
      *
      */
     static class IntSetter extends AbstractSetter {
@@ -310,9 +322,9 @@ public class Mapper {
     }
 
     /**
-     * Databaseからlong型の値を取得する実装クラス。
+     * implementation class to get/set long typed value.
      *
-     * @author tamura shingo
+     * @author tamura shingo (tamura.shingo at gmail.com)
      *
      */
     static class LongSetter extends AbstractSetter {
@@ -329,9 +341,9 @@ public class Mapper {
     }
 
     /**
-     * Databaseからshort型の値を取得する実装クラス。
+     * implementation class to get/set short typed value.
      *
-     * @author tamura shingo
+     * @author tamura shingo (tamura.shingo at gmail.com)
      *
      */
     static class ShortSetter extends AbstractSetter {
@@ -348,9 +360,9 @@ public class Mapper {
     }
 
     /**
-     * DatabaseからString型の値を取得する実装クラス。
+     * implementation class to get/set String typed value.
      *
-     * @author tamura shingox
+     * @author tamura shingo (tamura.shingo at gmail.com)
      *
      */
     static class StringSetter extends AbstractSetter {

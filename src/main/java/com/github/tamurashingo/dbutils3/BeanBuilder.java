@@ -31,9 +31,9 @@ import java.util.Map.Entry;
 import com.github.tamurashingo.dbutils3.Mapper.AbstractSetter;
 
 /**
- * Beanを生成し、現在の{@link ResultSet}を元にフィールド値をセットする。
+ * create bean, set value from {@link ResultSet}.
  * 
- * @author tamura shingo
+ * @author tamura shingo (tamura.shingo at gmail.com)
  *
  */
 public class BeanBuilder {
@@ -42,9 +42,9 @@ public class BeanBuilder {
     private Mapper mapper;
 
     /**
-     * コンストラクタ。
+     * constructor.
      * 
-     * @param cls このBeanBuilderで生成するBeanのクラス情報
+     * @param cls bean class information what this {@code BeanBuilder} create.
      */
     public BeanBuilder(Class<?> cls) {
         this.cls = cls;
@@ -53,13 +53,13 @@ public class BeanBuilder {
     }
     
     /**
-     * Beanを生成し、{@link ResultSet}を元にフィールド値をセットする。
+     * create bean, set value from {@link ResultSet}.
      * 
-     * @param rs 検索結果
-     * @return {@link ResultSet}の内容をセットしたBean
-     * @throws BeanBuilderException Beanの生成に失敗。
-     *         Beanが{@code public}で引数がないコンストラクタを持っていない、
-     *         もしくはアクセスできない位置でBeanが宣言されていないかを確認
+     * @param rs search result
+     * @return bean set {@link ResultSet}
+     * @throws BeanBuilderException failed to construct a bean.
+     *         check the bean class does not have default constructor,
+     *         or check the access qualifier.
      */
     public <T> T build(ResultSet rs) throws BeanBuilderException {
         try {
@@ -68,7 +68,7 @@ public class BeanBuilder {
             
             for (Entry<String, AbstractSetter> entry: mapper.entrySet()) {
                 /*-
-                 * key : Databaseカラム名
+                 * key : Database column name
                  * value : AbstractSetter
                  */
                 try {
@@ -78,7 +78,7 @@ public class BeanBuilder {
                     }
                 }
                 catch (IllegalArgumentException | InvocationTargetException | SQLException ex) {
-                    // 例外が発生したカラムはセットしない(nullのまま)
+                    // set nothing(null) when exception occurred.
                 }
             }
             
