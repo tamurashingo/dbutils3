@@ -26,7 +26,7 @@ package com.github.tamurashingo.dbutils3;
 /**
  * Signals that a JavaBeans initialization error has occurred.
  *
- * @author tamura shingo
+ * @author tamura shingo (tamura.shingo at gmail.com)
  *
  */
 public class BeanBuilderException extends Exception {

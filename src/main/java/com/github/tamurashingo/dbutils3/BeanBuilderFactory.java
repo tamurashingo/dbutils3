@@ -27,30 +27,29 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Beanとそれに対応する{@link BeanBuilder}を保持するクラス。
- * {@link BeanBuilder}は一度生成すれば再利用が可能なため、このクラスを使ってキャッシュを保持する。
+ * This class has bean class information and its {@link BeanBuilder}.
+ * {@link BeanBuilder} is reusable, so this class provide cache mechanism.
  *
  * <p>
- * 例
+ * example
  * <code><pre>
  * BeanBuilderFactory.Manager factoryManager = BeanBuilderFactory.getManager();
  * BeanBuilder builder = factoryManager.getBeanBuilder(XXXXBean.class);
  * </pre></code>
  * </p>
  *
- * @author tamura shingo
+ * @author tamura shingo (tamura.shingo at gmail.com)
  *
  */
 public class BeanBuilderFactory {
 
     /**
-     * {@link Manager}のインスタンス情報。
-     * クラスロード時にインスタンス化する
+     * instance information about {@link Manager}.
      */
     private static final Manager manager = new ManagerImpl();
 
     /**
-     * {@link Manager}を取得する。
+     * getter {@link Manager}.
      *
      * @return　{@link Manager}
      */
@@ -59,37 +58,36 @@ public class BeanBuilderFactory {
     }
 
     /**
-     * コンストラクタ。
-     * インスタンス化禁止。
+     * constructor.
+     * prevent instantiation.
      */
     private BeanBuilderFactory() {
     }
 
     /**
-     * {@link BeanBuilder}を取得するためのインタフェース。
+     * interface for getting {@link BeanBuilder}.
      *
-     * @author tamura shingo
+     * @author tamura shingo (tamura.shingo at gmail.com)
      *
      */
     public static interface Manager {
         /**
-         * Beanに対応する{@link BeanBuilder}を取得する。
+         * return {@link BeanBuilder} which this manager maps the specified key (Class). 
          *
-         * @param cls Beanのクラス情報
+         * @param cls bean class information
          * @return {@link BeanBuilder}
          */
         <T> BeanBuilder getBeanBuilder(Class<T> cls);
     }
 
     /**
-     * {@link BeanBuilder}を取得するための実装クラス。
-     * 内部にBeanクラスと{@link BeanBuilder}のキャッシュを保持する。
+     * This class provides cache mechanism and implements the {@link Manager} interface.
      *
-     * @author tamura shingo
+     * @author tamura shingo (tamura.shingo at gmail.com)
      *
      */
     private static class ManagerImpl implements Manager {
-        /** キャッシュ */
+        /** cache */
         private Map<Class<?>, BeanBuilder> mapper = new HashMap<>();
 
         @Override

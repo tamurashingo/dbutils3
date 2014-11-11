@@ -35,38 +35,38 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * 参照SQLや更新SQLを実行しやすくするためのDatabase接続ユーティリティ。
+ * This class is database utility to use query and update SQLs easily.
  *
- * @author tamura shingo
+ * @author tamura shingo (tamura.shingo at gmail.com)
  *
  */
 public class DBConnectionUtil implements AutoCloseable {
 
     /**
-     * Databaseコネクション
+     * Database connection
      */
     protected Connection conn;
 
     /**
-     * プリペアドステートメント
+     * prepared statement
      */
     protected PreparedStatement stmt;
 
     /**
-     * コンストラクタ。
-     * Databaseコネクションをセットする。
+     * constructor.
+     * specify the database connection.
      *
-     * @param conn Databaseコネクション
+     * @param conn database connection
      */
     public DBConnectionUtil(Connection conn) {
         this.conn = conn;
     }
 
     /**
-     * SQL文をプリコンパイルする。
+     * precompile the sql.
      *
-     * @param sql プリコンパイルするSQL文
-     * @throws SQLException Databaseエラー発生時
+     * @param sql sql statement to precompile
+     * @throws SQLException database error has occurred
      */
     public void prepare(String sql) throws SQLException {
         closeStmt();
@@ -74,11 +74,11 @@ public class DBConnectionUtil implements AutoCloseable {
     }
 
     /**
-     * 参照系SQLを実行し、結果を{@link Map}の{@link List}で得る。
-     *
-     * @param params プリコンパイルしたSQLに対するパラメータ
-     * @return 参照結果
-     * @throws SQLException Databaseエラー発生時
+     * execute query sql and return {@link List} of {@link Map}.
+     * 
+     * @param params parameter for precompiled sql
+     * @return search result
+     * @throws SQLException database error has occurred
      */
     public List<Map<String, String>> executeQuery(Object... params) throws SQLException {
         setValue(params);
@@ -101,12 +101,12 @@ public class DBConnectionUtil implements AutoCloseable {
     }
 
     /**
-     * 参照系SQLを実行し、結果をBeanの{@link List}で得る。
+     * execute query sql and return Bean of {@link List}.
      *
-     * @param cls 結果をセットするBeanのクラス情報
-     * @param params 実行パラメータ
-     * @return 参照結果
-     * @throws SQLException Databaseエラー発生もしくはBean設定でエラー発生
+     * @param cls bean class information which set search result
+     * @param params parameter for precompiled sql
+     * @return search result
+     * @throws SQLException database error or bean writer error has occurred. 
      */
     public <T> List<T> executeQuery(Class<T> cls, Object... params) throws SQLException {
         setValue(params);
@@ -130,11 +130,11 @@ public class DBConnectionUtil implements AutoCloseable {
 
 
     /**
-     * 更新系SQLを実行する。
+     * execute update sql.
      *
-     * @param params プリコンパイルしたSQLに対するパラメータ
-     * @return 更新件数
-     * @throws SQLException Databaseエラー発生時
+     * @param params parameter for precompiled sql
+     * @return the number of update
+     * @throws SQLException database error has occurred
      */
     public int executeUpdate(Object... params) throws SQLException {
         setValue(params);
@@ -142,25 +142,25 @@ public class DBConnectionUtil implements AutoCloseable {
     }
 
     /**
-     * コミットを実行する。
+     * do commit.
      *
-     * @throws SQLException Databaseエラー発生時
+     * @throws SQLException database error has occurred
      */
     public void commit() throws SQLException {
         conn.commit();
     }
 
     /**
-     * ロールバックを実行する。
+     * do rollback.
      *
-     * @throws SQLException Databaseエラー発生時
+     * @throws SQLException database error has occurred
      */
     public void rollback() throws SQLException {
         conn.rollback();
     }
 
     /**
-     * Databaseコネクションを切断する。
+     * disconnect database connection.
      */
     @Override
     public void close() {
@@ -170,26 +170,26 @@ public class DBConnectionUtil implements AutoCloseable {
                 conn.close();
             }
             catch (SQLException ex) {
-                // クローズ時の例外は何もしない
+                // nothing to do
             }
             conn = null;
         }
     }
 
     /**
-     * {@code Connection}を取得する。
+     * get {@link Connection}.
      *
-     * @return Databaseコネクション
+     * @return database connection
      */
     public Connection getConnection() {
         return this.conn;
     }
 
     /**
-     * プリコンパイルしたSQLにパラメータをセットする。
+     * set parameters for precompiled sql.
      *
-     * @param params プリコンパイルしたSQLに対するパラメータ
-     * @throws SQLException Databaseエラー時
+     * @param params parameter for precompiled sql
+     * @throws SQLException database error has occurred
      */
     private void setValue(Object... params) throws SQLException {
         int ix = 0;
@@ -207,7 +207,7 @@ public class DBConnectionUtil implements AutoCloseable {
     }
 
     /**
-     * プリペアドステートメントをクローズする。
+     * disconnect prepared statement.
      */
     private void closeStmt() {
         if (stmt != null) {
@@ -215,7 +215,7 @@ public class DBConnectionUtil implements AutoCloseable {
                 stmt.close();
             }
             catch (SQLException ex) {
-                // クローズ時の例外は何もしない
+                // nothing to do
             }
             stmt = null;
         }
