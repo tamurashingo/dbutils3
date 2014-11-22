@@ -42,8 +42,8 @@ import java.util.Set;
  * <p>
  * when specified following bean,
  * </p>
- * <p>
- * <code><pre>
+ * <pre>
+ * {@code
  * public class TestBean {
  *     &#064;Column("id")
  *     private int id;
@@ -57,44 +57,42 @@ import java.util.Set;
  *     // setter/getter
  *     ...
  * }
- * </pre></code>
- * </p>
+ * }
+ * </pre>
  * <p>
  * generate following setter process.
  * </p>
- * <p>
- * <table>
- *   <thaed>
+ * <table summary="variables and generated AbstractSetters">
+ *   <thead>
  *     <tr>
  *       <th>#</th>
  *       <th>ColumnName</th>
- *       <th>AbstractInvoker</th>
+ *       <th>AbstractSetter</th>
  *     </tr>
  *   </thead>
  *   <tbody>
  *     <tr>
  *       <td>1</td>
  *       <td>id</td>
- *       <td>{@link BeanBuilder.IntInvoker}<td>
- *     <tr>
+ *       <td>{@link IntSetter}<td>
  *     </tr>
+ *     <tr>
  *       <td>2</td>
  *       <td>user_name</td>
- *       <td>{@link BeanBuilder.StringInvoker}<td>
+ *       <td>{@link StringSetter}<td>
  *     </tr>
- *     </tr>
+ *     <tr>
  *       <td>3</td>
  *       <td>age</td>
- *       <td>{@link BeanBuilder.ShortInvoker}<td>
+ *       <td>{@link ShortSetter}<td>
  *     </tr>
- *     </tr>
+ *     <tr>
  *       <td>4</td>
  *       <td>valid</td>
- *       <td>{@link BeanBuilder.BoolInvoker}<td>
+ *       <td>{@link BooleanSetter}<td>
  *     </tr>
  *   </tbody>
  * </table>
- * </p>
  *
  * @author tamura shingo (tamura.shingo at gmail.com)
  *

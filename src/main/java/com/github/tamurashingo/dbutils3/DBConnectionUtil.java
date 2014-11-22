@@ -105,6 +105,7 @@ public class DBConnectionUtil implements AutoCloseable {
      *
      * @param cls bean class information which set search result
      * @param params parameter for precompiled sql
+     * @param <T> bean type
      * @return search result
      * @throws SQLException database error or bean writer error has occurred. 
      */

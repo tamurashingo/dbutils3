@@ -56,6 +56,7 @@ public class BeanBuilder {
      * create bean, set value from {@link ResultSet}.
      * 
      * @param rs search result
+     * @param <T> bean type
      * @return bean set {@link ResultSet}
      * @throws BeanBuilderException failed to construct a bean.
      *         check the bean class does not have default constructor,
