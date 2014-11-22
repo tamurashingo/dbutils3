@@ -1,6 +1,8 @@
 DBUtils3  - database utility version 3
 ======================================
 
+[![Build Status](https://travis-ci.org/tamurashingo/dbutils3.svg?branch=master)](https://travis-ci.org/tamurashingo/dbutils3)
+
 This is database utility.
 
 following class, annotation are used.
