@@ -13,6 +13,19 @@ Javaでデータベースを操作する際によく使うユーティリティ�
   - JavaBeansとデータベースのカラムをつなぐアノテーション
 
 
+使い方
+------
+pom.xmlに追加します。
+
+```xml
+<dependency>
+    <groupId>com.github.tamurashingo.dbutil3</groupId>
+    <artifactId>dbutil3</artifactId>
+    <version>0.1.0</version>
+</dependency>
+```
+
+
 DBConnectionUtilの使い方
 ----------------------
 ### DBConnectionUtilのインスタンス化 ###
@@ -88,6 +101,81 @@ public class XXXXBean {
         return this.beanId;
     }
 }
+```
+
+
+Example with JDBI
+-----------------
+BeanBuilderを使うことでJDBIのMapperを楽に定義することができます。
+
+```java
+public class UserBean implements Serializable {
+    private static final long serialVersionUID = 1L;
+    @Column("id")
+    private int id;
+    @Column("username")
+    private String username;
+    @Column("password")
+    private String password;
+
+    public void setId(int id) {
+        this.id = id;
+    }
+    public int getId() {
+        return this.id;
+    }
+    public void setUsername(String username) {
+        this.username = username;
+    }
+    public String getUsername() {
+        return this.username;
+    }
+    public void setPassword(String password) {
+        this.password = password;
+    }
+    public String getPassword() {
+        return this.password;
+    }
+}
+
+public interface UserDAO {
+
+    /**
+     * get user-info with id.
+     *
+     * @param id id
+     * @return user-info
+     */
+    @SingleValueResult(UserBean.class)
+    @SqlQuery(
+              " select "
+            + "   id, "
+            + "   username, "
+            + "   password "
+            + " from "
+            + "   user "
+            + " where "
+            + "   id = :id "
+    )
+    @Mapper(UserJdbiMapper.class)
+    public Optional<UserBean> getUserById(@Bind("id") String id);
+}
+
+public class UserJdbiMapper implements ResultSetMapper<UserBean> {
+    private BeanBuilder builder = new BeanBuilder(UserBean.class);
+
+    @Override
+    public UserBean map(int inex, ResultSet rs, StatementContext ctx) throws SQLExcetion {
+        try {
+            UserBean bean = builder.build(rs);
+            return bean;
+        }
+        catch (BeanBuilderException ex) {
+            throw new SQLException(ex);
+        }
+    }
+}
+
 ```
 
 

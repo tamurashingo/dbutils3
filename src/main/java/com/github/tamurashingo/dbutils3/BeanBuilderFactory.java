@@ -32,11 +32,13 @@ import java.util.Map;
  *
  * <p>
  * example
- * <code><pre>
+ * </p>
+ * <pre>
+ * {@code
  * BeanBuilderFactory.Manager factoryManager = BeanBuilderFactory.getManager();
  * BeanBuilder builder = factoryManager.getBeanBuilder(XXXXBean.class);
- * </pre></code>
- * </p>
+ * }
+ * </pre>
  *
  * @author tamura shingo (tamura.shingo at gmail.com)
  *
@@ -75,6 +77,7 @@ public class BeanBuilderFactory {
          * return {@link BeanBuilder} which this manager maps the specified key (Class). 
          *
          * @param cls bean class information
+         * @param <T> bean type
          * @return {@link BeanBuilder}
          */
         <T> BeanBuilder getBeanBuilder(Class<T> cls);
