@@ -1,6 +1,8 @@
 DBUtils3  - database utility version 3
 ======================================
 
+[![Build Status](https://travis-ci.org/tamurashingo/dbutils3.svg?branch=master)](https://travis-ci.org/tamurashingo/dbutils3)
+
 Javaでデータベースを操作する際によく使うユーティリティです。
 主にしたの2つのクラス、アノテーションを使います。
 
@@ -39,11 +41,40 @@ try (DBConnectionUtil conn = new DBConnectionUtil(connection)) {
 ### PreparedStatementのプリコンパイル ###
  
 ```java
+conn.prepareWithParam("select * from table where id = :id");
+conn.prepareWithParam("insert into table values(:id, :count, :text)");
+```
+
+または
+
+```java
 conn.prepare("select * from table where id = ?");
 conn.prepare("insert into table values (?, ?, ?)");
 ```
 
+`:id`のようにコロン+変数名でパラメータを指定することができます。
+`:id`が複数個あった場合はすべて同じ値が指定されます。
+
+`?`を使った指定も可能です。これは通常の`PreparedStatement`と同じ仕様です。
+
+
 ### 参照の実行 ###
+
+```
+Param p = new Param();
+p.put("id", 3);
+// ColumnアノテーションをBeanに付与しておく必要があります（後述） 
+List<XXXXBean> result = conn.executeQueryWithParam(XXXXBean.class, param);
+System.out.println(result.get(0).getId());
+
+Param p = new Param();
+p.put("id", 3);
+// データベースのカラム名を直接指定しても取得できます
+List<Map<String, String>> result = conn.executeQueryWithParam(param);
+System.out.println(result.get(0).get("id"));
+```
+
+または
 
 ```java
 // ColumnアノテーションをBeanに付与しておく必要があります（後述） 
@@ -57,6 +88,17 @@ System.out.println(result.get(0).get("id"));
 
 
 ### 更新の実行 ###
+
+```java
+Param p = new Param();
+p.put("id", 3);
+p.put("count", 4);
+p.put("text", "data");
+// 戻り値は更新件数
+int count = conn.executeUpdateWithparam(p);
+```
+
+または
 
 ```java
 // 戻り値は更新件数
@@ -181,8 +223,7 @@ public class UserJdbiMapper implements ResultSetMapper<UserBean> {
 
 License
 -------
-Copyright &copy; 2014 tamura shingo
+Copyright &copy; 2014-2015 tamura shingo
 Licensed under the [MIT License][MIT].
 
 [MIT]: http://www.opensource.org/licenses/mit-license.php
-    

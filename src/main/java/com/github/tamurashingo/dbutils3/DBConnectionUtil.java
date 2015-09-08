@@ -34,8 +34,61 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.github.tamurashingo.dbutils3.parser.SQLParser;
+
 /**
- * This class is database utility to use query and update SQLs easily.
+ * The <code>DBConnectionUtil</code> class is database utility to use query and update SQLs easily.
+ * <br>
+ * <blockquote><pre>
+ *     Connection connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/db", "root", "password");
+ *     try (DBConnection conn = new DBConnection(connection)) {
+ *         conn.prepareWithParam(
+ *               " insert into "
+ *             + "   user "
+ *             + " ( "
+ *             + "   id, "
+ *             + "   name, "
+ *             + "   start_ymd, "
+ *             + "   end_ymd "
+ *             + " ) "
+ *             + " values ( "
+ *             + "   :id, "
+ *             + "   :name, "
+ *             + "   :start_ymd, "
+ *             + "   :end_ymd "
+ *             + " ) "
+ *         );
+ *         conn.executeUpdate(
+ *           new Param()
+ *               .put("id", 1)
+ *               .put("name", "tamura")
+ *               .put("start_ymd", "20150101")
+ *               .put("end_ymd", "20151231"));
+ *     
+ *         conn.prepareWithParam(
+ *               " select "
+ *             + "   * "
+ *             + " from "
+ *             + "   user "
+ *             + " where "
+ *             + "   id = :id "
+ *             + " and "
+ *             + "   start_ymd &lt;= :today and :today &lt;= end_ymd "
+ *         );
+ *         List&lt;UserBean&gt; users = conn.executeQueryWithParam(
+ *             new Param()
+ *                 .put("id", "1")
+ *                 .put("today", "20150830"));
+ *
+ *         assertThat(users, is(notNullValue()));
+ *         assertThat(users.size(), is(1));
+ *         assertThat(users.get(0).getId(), is(1));
+ *         assertThat(users.get(0).getName(), is("tamura"));
+ *     }
+ *     finally {
+ *       conn.close();
+ *     }
+ * </pre></blockquote>
  *
  * @author tamura shingo (tamura.shingo at gmail.com)
  *
@@ -51,6 +104,11 @@ public class DBConnectionUtil implements AutoCloseable {
      * prepared statement
      */
     protected PreparedStatement stmt;
+    
+    /**
+     * sql parser
+     */
+    protected SQLParser parser;
 
     /**
      * constructor.
@@ -72,6 +130,17 @@ public class DBConnectionUtil implements AutoCloseable {
         closeStmt();
         stmt = conn.prepareStatement(sql);
     }
+    
+    /**
+     * analyze and precompile the sql.
+     * 
+     * @param sql contains parameter with colon prefix
+     * @throws SQLException database error has occurred
+     */
+    public void prepareWithParam(String sql) throws SQLException {
+        parser = new SQLParser();
+        prepare(parser.analyzeSQL(sql));
+    }
 
     /**
      * execute query sql and return {@link List} of {@link Map}.
@@ -82,7 +151,7 @@ public class DBConnectionUtil implements AutoCloseable {
      */
     public List<Map<String, String>> executeQuery(Object... params) throws SQLException {
         setValue(params);
-
+        
         List<Map<String, String>> list = new ArrayList<>();
         try (ResultSet rs = stmt.executeQuery()){
             ResultSetMetaData rsmd = rs.getMetaData();
@@ -98,6 +167,23 @@ public class DBConnectionUtil implements AutoCloseable {
         }
 
         return list;
+    }
+    
+    /**
+     * execute query sql and return {@link List} of {@link Map}.
+     * 
+     * @param params parameter for analyzed sql
+     * @return search result
+     * @throws SQLException sql is not analyzed or database error has occurred
+     * @since 0.2.0
+     */
+    public List<Map<String, String>> executeQueryWithParam(Param params) throws SQLException {
+        if (!isAnalyzed()) {
+            throw new SQLException("sql is not analyzed");
+        }
+        
+        Object[] p = createParams(params);
+        return executeQuery(p);
     }
 
     /**
@@ -128,6 +214,25 @@ public class DBConnectionUtil implements AutoCloseable {
 
         return list;
     }
+    
+    /**
+     * execute query sql and return Bean of {@link List}.
+     * 
+     * @param cls bean class information which set search result
+     * @param params parameter for analyzed sql
+     * @param <T> bean type
+     * @return search result
+     * @throws SQLException sql is not analyzed or database error has occurred
+     * @since 0.2.0
+     */
+    public <T> List<T> executeQueryWithParam(Class<T> cls, Param params) throws SQLException {
+        if (!isAnalyzed()) {
+            throw new SQLException("sql is not analyzed");
+        }
+        
+        Object[] p = createParams(params);
+        return executeQuery(cls, p);
+    }
 
 
     /**
@@ -140,6 +245,22 @@ public class DBConnectionUtil implements AutoCloseable {
     public int executeUpdate(Object... params) throws SQLException {
         setValue(params);
         return stmt.executeUpdate();
+    }
+    
+    /**
+     * execute update sql.
+     * 
+     * @param params parameter for analyzed sql
+     * @return the number of update
+     * @throws SQLException sql is not analyzed or database error has occurred
+     */
+    public int executeUpdateWithParam(Param params) throws SQLException {
+        if (!isAnalyzed()) {
+            throw new SQLException("sql is not analyzed");
+        }
+        
+        Object[] p = createParams(params);
+        return executeUpdate(p);
     }
 
     /**
@@ -220,5 +341,26 @@ public class DBConnectionUtil implements AutoCloseable {
             }
             stmt = null;
         }
+    }
+    
+    /**
+     * @return true when {@link #prepareWithParam(String)} was called.
+     */
+    private boolean isAnalyzed() {
+        if (parser == null) {
+            return false;
+        }
+        else {
+            return parser.isAnalyzed();
+        }
+    }
+    
+    /**
+     * 
+     * @param params
+     * @return
+     */
+    private Object[] createParams(Param params) {
+        return parser.createParams(params);
     }
 }
