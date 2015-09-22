@@ -23,7 +23,7 @@ pom.xmlに追加します。
 <dependency>
     <groupId>com.github.tamurashingo.dbutil3</groupId>
     <artifactId>dbutil3</artifactId>
-    <version>0.1.0</version>
+    <version>0.2.0</version>
 </dependency>
 ```
 

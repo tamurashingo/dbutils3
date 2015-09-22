@@ -2,7 +2,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>com.github.tamurashingo.dbutil3</groupId>
   <artifactId>dbutil3</artifactId>
-  <version>0.2.0-SNAPSHOT</version>
+  <version>0.2.0</version>
   <name>dbutil3</name>
   <description>Database Connection Utility version 3</description>
 
