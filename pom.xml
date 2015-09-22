@@ -2,12 +2,12 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>com.github.tamurashingo.dbutil3</groupId>
   <artifactId>dbutil3</artifactId>
-  <version>0.1.0</version>
+  <version>0.2.0</version>
   <name>dbutil3</name>
   <description>Database Connection Utility version 3</description>
 
   
-  <inceptionYear>2014</inceptionYear>
+  <inceptionYear>2014, 2015</inceptionYear>
 
 
   <url>https://github.com/tamurashingo/dbutils3</url>
@@ -26,6 +26,10 @@
   </scm>
 
   <distributionManagement>
+    <snapshotRepository>
+      <id>ossrh</id>
+      <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+    </snapshotRepository>
     <repository>
       <id>sonatype-nexus-staging</id>
       <name>Nexus Release Repository</name>
@@ -102,6 +106,27 @@
           <encoding>UTF-8</encoding>
         </configuration>
       </plugin>
+      
+      <!-- Plugin to compile the g4 files ahead of java files
+           See https://github.com/antlr/antlr4/blob/master/antlr4-maven-plugin/src/site/apt/examples/simple.apt.vm
+           Except that the grammar does not need to contain the package declaration as stated in the documentation (I do not know why)
+           To use this pugin, type:
+             mvn antlr4:antlr4
+           In any case, Maven will invoke this plugin before the Java source is compiled
+        -->
+      <plugin>
+        <groupId>org.antlr</groupId>
+        <artifactId>antlr4-maven-plugin</artifactId>
+        <version>4.5</version>
+        <executions>
+          <execution>
+            <phase>generate-sources</phase>
+            <goals>
+              <goal>antlr4</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
 
       <!-- coverage -->
       <plugin>
@@ -174,9 +199,6 @@
           <encoding>UTF-8</encoding>
           <docencoding>UTF-8</docencoding>
           <charset>UTF-8</charset>
-          <links>
-            <link>http://docs.oracle.com/javase/jp/7/api/</link>
-          </links>
         </configuration>
         <executions>
           <execution>
@@ -228,6 +250,11 @@
   </reporting>
   
   <dependencies>
+    <dependency>
+      <groupId>org.antlr</groupId>
+      <artifactId>antlr4-runtime</artifactId>
+      <version>4.5</version>
+    </dependency>
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>

@@ -142,7 +142,50 @@ public class DBConnectionUtilTest {
             }
         }
     }
-    
+
+    /**
+     * prepare, executeQuery　の試験
+     */
+    @Test
+    public void testExecuteQueryWithParam() throws Exception {
+        try (Connection connection = connect()) {
+            try (DBConnectionUtil conn = new DBConnectionUtil(connection)) {
+                String selectSQL =
+                          " select "
+                        + "   id, "
+                        + "   boolean_value, "
+                        + "   byte_value, "
+                        + "   date_value, "
+                        + "   double_value, "
+                        + "   float_value, "
+                        + "   int_value, "
+                        + "   long_value, "
+                        + "   short_value, "
+                        + "   str_value "
+                        + " from "
+                        + "   test "
+                        + " where "
+                        + "   id = :id "
+                        ;
+                conn.prepareWithParam(selectSQL);
+                List<Map<String, String>> result = conn.executeQueryWithParam(new Param().put("id", "1"));
+                
+                assertThat(result, is(notNullValue()));
+                assertThat(result.size(), is(1));
+                assertThat(result.get(0).get("ID"), is("1"));
+                assertThat(result.get(0).get("BOOLEAN_VALUE"), is("0"));
+                assertThat(result.get(0).get("BYTE_VALUE"), is("1"));
+                assertThat(result.get(0).get("DATE_VALUE"), is("2014-10-27 12:34:56.0"));
+                assertThat(result.get(0).get("DOUBLE_VALUE"), is("2.3"));
+                assertThat(result.get(0).get("FLOAT_VALUE"), is("4.5"));
+                assertThat(result.get(0).get("INT_VALUE"), is("6"));
+                assertThat(result.get(0).get("LONG_VALUE"), is("7"));
+                assertThat(result.get(0).get("SHORT_VALUE"), is("8"));
+                assertThat(result.get(0).get("STR_VALUE"), is("string"));
+            }
+        }
+    }
+
     /**
      * prepare, executeQuery　の試験
      */
@@ -186,6 +229,51 @@ public class DBConnectionUtilTest {
         }
     }
     
+    /**
+     * prepare, executeQuery　の試験
+     */
+    @Test
+    public void testExecuteQueryBeanWithParam() throws Exception {
+        try (Connection connection = connect()) {
+            try (DBConnectionUtil conn = new DBConnectionUtil(connection)) {
+                String selectSQL =
+                          " select "
+                        + "   id, "
+                        + "   boolean_value, "
+                        + "   byte_value, "
+                        + "   date_value, "
+                        + "   double_value, "
+                        + "   float_value, "
+                        + "   int_value, "
+                        + "   long_value, "
+                        + "   short_value, "
+                        + "   str_value "
+                        + " from "
+                        + "   test "
+                        + " where "
+                        + "   id = :id "
+                        ;
+                conn.prepareWithParam(selectSQL);
+                List<TestBean> result = conn.executeQueryWithParam(TestBean.class, new Param().put("id", "1"));
+                
+                assertThat(result, is(notNullValue()));
+                assertThat(result.size(), is(1));
+                assertThat(result.get(0).isBooleanVal(), is(false));
+                assertThat(result.get(0).getByteVal(), is((byte)1));
+                
+                DateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                assertThat(df.format(result.get(0).getDateVal()), is("2014-10-27 12:34:56"));
+                
+                assertEquals(2.3, result.get(0).getDoubleVal(), 0.001);
+                assertEquals(4.5, result.get(0).getFloatVal(), 0.001);
+                assertThat(result.get(0).getIntVal(), is(6));
+                assertThat(result.get(0).getLongVal(), is(7L));
+                assertThat(result.get(0).getShortVal(), is((short)8));
+                assertThat(result.get(0).getStrVal(), is("string"));
+            }
+        }
+    }
+
     /**
      * prepare, executeUpdate　の試験
      */
@@ -244,6 +332,87 @@ public class DBConnectionUtilTest {
                 
                 conn.prepare(selectSQL);
                 List<TestBean> result = conn.executeQuery(TestBean.class, 2);
+                
+                /* insert件数　*/
+                assertThat(count, is(1));
+                
+                /* insert結果をselectして確認 */
+                assertThat(result, is(notNullValue()));
+                assertThat(result.size(), is(1));
+                assertThat(result.get(0).isBooleanVal(), is(true));
+                assertThat(result.get(0).getByteVal(), is((byte)2));
+                
+                DateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                assertThat(df.format(result.get(0).getDateVal()), is("2014-10-28 12:34:56"));
+                
+                assertEquals(4.5, result.get(0).getDoubleVal(), 0.001);
+                assertEquals(5.6, result.get(0).getFloatVal(), 0.001);
+                assertThat(result.get(0).getIntVal(), is(7));
+                assertThat(result.get(0).getLongVal(), is(8L));
+                assertThat(result.get(0).getShortVal(), is((short)9));
+                assertThat(result.get(0).getStrVal(), is("this is a pen"));
+            }
+        }
+    }
+
+    /**
+     * prepare, executeUpdate　の試験
+     */
+    @Test
+    public void testExecuteUpdateWithParam() throws Exception {
+        try (Connection connection = connect()) {
+            try (DBConnectionUtil conn = new DBConnectionUtil(connection)) {
+                String insertSQL =
+                          " insert into "
+                        + "   test "
+                        + " ( "
+                        + "   id, "
+                        + "   boolean_value, "
+                        + "   byte_value, "
+                        + "   date_value, "
+                        + "   double_value, "
+                        + "   float_value, "
+                        + "   int_value, "
+                        + "   long_value, "
+                        + "   short_value, "
+                        + "   str_value "
+                        + " ) "
+                        + " values ( "
+                        + "   3, " // id
+                        + "   true, " // boolean
+                        + "   2, " // byte
+                        + "   '2014-10-28 12:34:56', " // date
+                        + "   4.5, " // double
+                        + "   5.6, " // float
+                        + "   7, " // int
+                        + "   8, " // long
+                        + "   :short, " // short
+                        + "   :long " /// string
+                        + " ) "
+                        ;
+                
+                String selectSQL =
+                          " select "
+                        + "   id, "
+                        + "   boolean_value, "
+                        + "   byte_value, "
+                        + "   date_value, "
+                        + "   double_value, "
+                        + "   float_value, "
+                        + "   int_value, "
+                        + "   long_value, "
+                        + "   short_value, "
+                        + "   str_value "
+                        + " from "
+                        + "   test "
+                        + " where "
+                        + "   id = :id "
+                        ;
+                conn.prepareWithParam(insertSQL);
+                int count = conn.executeUpdateWithParam(new Param().put("short", 9).put("long", "this is a pen"));
+                
+                conn.prepareWithParam(selectSQL);
+                List<TestBean> result = conn.executeQueryWithParam(TestBean.class, new Param().put("id", 3));
                 
                 /* insert件数　*/
                 assertThat(count, is(1));
@@ -359,6 +528,99 @@ public class DBConnectionUtilTest {
         
     }
     
+    /**
+     * executeUpdate　で null を指定した際の試験
+     */
+    @Test
+    public void testExecuteUpdateNullWithParam() throws Exception {
+        try (Connection connection = connect()) {
+            try (DBConnectionUtil conn = new DBConnectionUtil(connection)) {
+                String insertSQL =
+                          " insert into "
+                        + "   test "
+                        + " ( "
+                        + "   id, "
+                        + "   boolean_value, "
+                        + "   byte_value, "
+                        + "   date_value, "
+                        + "   double_value, "
+                        + "   float_value, "
+                        + "   int_value, "
+                        + "   long_value, "
+                        + "   short_value, "
+                        + "   str_value "
+                        + " ) "
+                        + " values ( "
+                        + "   :id, " // id
+                        + "   :boolean, " // boolean
+                        + "   :byte, " // byte
+                        + "   :date, " // date
+                        + "   :double, " // double
+                        + "   :float, " // float
+                        + "   :int, " // int
+                        + "   :long, " // long
+                        + "   :short, " // short
+                        + "   :string " /// string
+                        + " ) "
+                        ;
+                
+                String selectSQL =
+                          " select "
+                        + "   id, "
+                        + "   boolean_value, "
+                        + "   byte_value, "
+                        + "   date_value, "
+                        + "   double_value, "
+                        + "   float_value, "
+                        + "   int_value, "
+                        + "   long_value, "
+                        + "   short_value, "
+                        + "   str_value "
+                        + " from "
+                        + "   test "
+                        + " where "
+                        + "   id = :id "
+                        ;
+                conn.prepareWithParam(insertSQL);
+                int count = conn.executeUpdateWithParam(
+                        new Param()
+                           .put("id", 2)
+                           .put("boolean", null)
+                           .put("byte", null)
+                           .put("date", null)
+                           .put("double", null)
+                           .put("float", null)
+                           .put("int", null)
+                           .put("long", null)
+                           .put("short", null)
+                           .put("string", null)
+                           );
+                
+                conn.prepareWithParam(selectSQL);
+                List<TestBean> result = conn.executeQueryWithParam(TestBean.class, new Param().put("id", 2));
+                
+                /* insert件数　*/
+                assertThat(count, is(1));
+                
+                /* insert結果をselectして確認 */
+                assertThat(result, is(notNullValue()));
+                assertThat(result.size(), is(1));
+                assertThat(result.get(0).isBooleanVal(), is(false));
+                assertThat(result.get(0).getByteVal(), is((byte)0));
+                
+                assertThat(result.get(0).getDateVal(), is(nullValue()));
+                
+                assertEquals(0.0, result.get(0).getDoubleVal(), 0.001);
+                assertEquals(0.0, result.get(0).getFloatVal(), 0.001);
+                assertThat(result.get(0).getIntVal(), is(0));
+                assertThat(result.get(0).getLongVal(), is(0L));
+                assertThat(result.get(0).getShortVal(), is((short)0));
+                assertThat(result.get(0).getStrVal(), is(nullValue()));
+            }
+        }
+        
+    }
+
     @Test
     public void testOther() throws Exception {
         try (Connection connection = connect()) {

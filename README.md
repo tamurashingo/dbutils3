@@ -24,7 +24,7 @@ add to pom.xml
 <dependency>
     <groupId>com.github.tamurashingo.dbutil3</groupId>
     <artifactId>dbutil3</artifactId>
-    <version>0.1.0</version>
+    <version>0.2.0</version>
 </dependency>
 ```
 
@@ -43,12 +43,34 @@ try (DBConnectionUtil conn = DBConnectionUtil(connection)) {
 ### precompile SQL (using PreparedStatement) ###
 
 ```java
+conn.prepareWithParam("select * from table where id = :id");
+conn.prepareWithParam("insert into table values(:id, :count, :text)");
+```
+
+or
+
+```java
 conn.prepare("select * from table where id = ?");
 conn.prepare("insert into table values (?, ?, ?)");
 ```
 
-
 ### execute query ###
+
+```java
+Param p = new Param();
+p.put("id", 3);
+// Generate bean
+List<XXXXBean> result = conn.executeQueryWithParam(XXXXBean.class, param);
+System.out.println(result.get(0).getId());
+
+Param p = new Param();
+p.put("id", 3);
+// Generate Map
+List<Map<String, String>> result = conn.executeQueryWithParam(param);
+System.out.println(result.get(0).get("id"));
+```
+
+or
 
 ```java
 // Generate bean
@@ -62,6 +84,17 @@ System.out.println(result.get(0).get("id"));
 
 
 ### execute update ###
+
+```java
+Param p = new Param();
+p.put("id", 3);
+p.put("count", 4);
+p.put("text", "data");
+// result is the number of updated
+int count = conn.executeUpdateWithparam(p);
+```
+
+or
 
 ```java
 // result is the number of updated
@@ -187,7 +220,7 @@ public class UserJdbiMapper implements ResultSetMapper<UserBean> {
 
 License
 -------
-Copyright &copy; 2014 tamura shingo
+Copyright &copy; 2014-2015 tamura shingo
 Licensed under the [MIT License][MIT].
 
 [MIT]: http://www.opensource.org/licenses/mit-license.php
