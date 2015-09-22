@@ -25,11 +25,11 @@ lexer grammar SQLLexer;
 
 ALPHA
     :  'a'..'z'
-    | 'A'..'Z'
-    | '_'
+    |  'A'..'Z'
+    |  '_'
     ;
 NUMBER
-    : '0'..'9'
+    :  '0'..'9'
     ;
 
 SYMBOL
@@ -62,17 +62,12 @@ SYMBOL
     |  '|'
     ;
 
-QUOTE
-    :  '\'' STRINGCHAR+ '\''
+QUOTELITERAL
+    :  ('\'' (~'\'')* ('\'')?)
     ;
 
 STRINGLITERAL
-    :  '"' STRINGCHAR+ '"'
-    ;
-
-fragment
-STRINGCHAR
-    :  ~["\\]
+    :  ('\"' (~'\"')* ('\"')?)
     ;
 
 COLON
@@ -80,7 +75,7 @@ COLON
     ;
 
 NAMED_PARAM
-    : COLON ALPHA ? (ALPHA | NUMBER)+
+    : COLON ALPHA (ALPHA | NUMBER)*
     ;
 
 NEWLINE
