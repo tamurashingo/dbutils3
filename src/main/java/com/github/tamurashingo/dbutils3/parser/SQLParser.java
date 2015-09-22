@@ -32,9 +32,21 @@ import org.antlr.v4.runtime.Token;
 import com.github.tamurashingo.dbutils3.Param;
 
 /**
+ * analyse sql with named parameter and convert to parametarised SQL.
+ * 
+ * <p>example.</p>
+ * <pre><code>
+ * SQLParser parser = new SQLParser();
+ * String sql = parser.analyzeSQL("select * from table where id = :id");
+ * Param param = new Param().put("id", 123);
+ * Object[] params = parser.createParams(param);
+ * 
+ * conn.prepare(sql);
+ * List&lt;TableBean&gt; result = conn.executeQuery(TableBean.class, params);
+ * </code></pre>
  * 
  * @author tamura shingo (tamura.shingo at gmail.com)
- *
+ * @since 0.2.0
  */
 public class SQLParser {
     
@@ -43,15 +55,27 @@ public class SQLParser {
     
     private boolean analyzed;
     
+    /**
+     * constructor
+     */
     public SQLParser() {
         keyNames = new ArrayList<>();
         analyzed = false;
     }
     
+    /**
+     * @return true when {@link #analyzeSQL(String)} called.
+     */
     public boolean isAnalyzed() {
         return analyzed;
     }
     
+    /**
+     * analyse sql with named parameter and convert to parametarised SQL.
+     * 
+     * @param sql sql string
+     * @return converted sql string
+     */
     public String analyzeSQL(String sql) {
         SQLLexer l = new SQLLexer(new ANTLRInputStream(sql));
         StringBuilder buf = new StringBuilder();
@@ -81,10 +105,20 @@ public class SQLParser {
         return analyzedSQL;
     }
     
+    /**
+     * get converted sql string
+     * @return converted sql string
+     */
     public String getAnalyzedSQL() {
         return analyzedSQL;
     }
     
+    /**
+     * convert named parameters to array of parameter values.
+     * 
+     * @param params named parameters and values
+     * @return array of parameter values
+     */
     public Object[] createParams(Param params) {
         List<Object> p = new ArrayList<>(keyNames.size());
         for (String key: keyNames) {

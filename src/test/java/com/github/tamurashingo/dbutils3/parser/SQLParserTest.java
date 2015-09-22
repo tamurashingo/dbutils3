@@ -21,34 +21,33 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package com.github.tamurashingo.dbutils3;
+package com.github.tamurashingo.dbutils3.parser;
 
 import org.junit.*;
 
+import com.github.tamurashingo.dbutils3.Param;
 import com.github.tamurashingo.dbutils3.parser.SQLParser;
 
 import static org.junit.Assert.*;
-
-
 import static org.hamcrest.CoreMatchers.*;
 
 
 public class SQLParserTest {
-    
+
     @Test
-    public void testEmptySQL() {
+    public void testEmptySQL() throws Exception {
         String sql = "";
         SQLParser parser = new SQLParser();
         String analyzedSQL = parser.analyzeSQL(sql);
         Object[] params = parser.createParams(new Param());
-        
+
         assertThat(analyzedSQL, is(""));
         assertThat(params, is(notNullValue()));
         assertThat(params.length, is(0));
     }
     
     @Test
-    public void testSingleColumnSQL() {
+    public void testSingleColumnSQL() throws Exception {
         String sql =
                   " select "
                 + "   * "
@@ -72,7 +71,7 @@ public class SQLParserTest {
     
     
     @Test
-    public void testMultiColumnSQL() {
+    public void testMultiColumnSQL() throws Exception {
         String sql =
                   " select "
                 + "   * "
@@ -98,7 +97,7 @@ public class SQLParserTest {
     }
     
     @Test
-    public void testSameColumnSQL() {
+    public void testSameColumnSQL() throws Exception {
         String sql =
                   " select "
                 + "   * "
@@ -140,7 +139,7 @@ public class SQLParserTest {
     }
     
     @Test
-    public void testStringSQL() {
+    public void testStringSQL() throws Exception {
         String sql =
                   " select "
                 + "  ':id', "
@@ -157,10 +156,62 @@ public class SQLParserTest {
         SQLParser parser = new SQLParser();
         String analyzedSQL = parser.analyzeSQL(sql);
         Object[] params = parser.createParams(new Param().put("id", 1).put("param",  2));
-        
+
         assertThat(analyzedSQL, is(testSQL));
         assertThat(params, is(notNullValue()));
         assertThat(params.length, is(1));
         assertThat(params[0], is((Object)1));
     }
+
+    @Test
+    public void testInStringSQL() throws Exception {
+        String sql =
+                "\"one's\""
+                ;
+
+        String testSQL = "\"one's\"";
+
+        SQLParser parser = new SQLParser();
+        String analyzedSQL = parser.analyzeSQL(sql);
+
+        assertThat(analyzedSQL, is(testSQL));
+    }
+
+    /*-
+     * check unclosed string was parsed.
+     * (database throws SQLException)
+     */
+    @Test
+    public void testUclosedStringSQL() throws Exception {
+        String sql =
+                "this is \"Unclosed\" \"String"
+                ;
+
+        String testSQL = "this is \"Unclosed\" \"String";
+
+        SQLParser parser = new SQLParser();
+        String analyzedSQL = parser.analyzeSQL(sql);
+
+        assertThat(analyzedSQL, is(testSQL));
+    }
+
+
+    /*-
+     * check unclosed quote was parsed.
+     * (database throws SQLException)
+     */
+    @Test
+    public void testUnclosedQuote() throws Exception {
+        String sql =
+                "this is 'unclosed quote"
+                ;
+
+        String testSQL = "this is 'unclosed quote";
+
+        SQLParser parser = new SQLParser();
+        String analyzedSQL = parser.analyzeSQL(sql);
+
+        assertThat(analyzedSQL, is(testSQL));
+    }
+
 }
