@@ -53,7 +53,7 @@
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <jacoco.version>0.7.1.201405082137</jacoco.version>
+    <jacoco.version>0.7.5.201505241946</jacoco.version>
     <jacoco.include.package>com.*</jacoco.include.package>
   </properties>
 
@@ -143,6 +143,7 @@
         <version>${jacoco.version}</version>
         <executions>
           <execution>
+            <id>prepare-agent</id>
             <goals>
               <goal>prepare-agent</goal>
             </goals>
@@ -155,6 +156,11 @@
             </goals>
           </execution>
         </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.eluder.coveralls</groupId>
+        <artifactId>coveralls-maven-plugin</artifactId>
+        <version>4.0.0</version>
       </plugin>
       
       <plugin>
