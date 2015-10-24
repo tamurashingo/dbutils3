@@ -3,6 +3,7 @@ DBUtils3  - database utility version 3
 
 [![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.github.tamurashingo.dbutil3/dbutil3/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.github.tamurashingo.dbutil3/dbutil3)
 [![Build Status](https://travis-ci.org/tamurashingo/dbutils3.svg?branch=master)](https://travis-ci.org/tamurashingo/dbutils3)
+[![Coverage Status](https://coveralls.io/repos/tamurashingo/dbutils3/badge.svg?branch=master&service=github)](https://coveralls.io/github/tamurashingo/dbutils3?branch=master)
 [![License: MIT](http://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 
 This is database utility.
