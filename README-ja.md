@@ -26,7 +26,7 @@ pom.xmlに追加します。
 <dependency>
     <groupId>com.github.tamurashingo.dbutil3</groupId>
     <artifactId>dbutil3</artifactId>
-    <version>0.2.0</version>
+    <version>0.2.1-SNAPSHOT</version>
 </dependency>
 ```
 
@@ -148,6 +148,39 @@ public class XXXXBean {
 }
 ```
 
+### AutoBinding ###
+Databaseのカラム名とBeanのプロパティがほぼ同じの場合、自動でバインドする機能があります。
+Beanのプロパティ名をもとにカラム名を決定します。(キャメルケース → スネークケース)
+Columnアノテーションがある場合は、それが優先されます。
+
+```java
+@AutoBiding
+public class TestBean {
+    private String testId;
+    private String camelCaseValue;
+    private String snake_case_value;
+    @Column("original_string")
+    private String testValue;
+    ...
+}
+```
+
+このコードは以下のコードと同等です。
+
+```java
+public class TestBean {
+    @Column("test_id")
+    private String testId;
+    @Column("camel_case_value")
+    private String camelCaseValue;
+    @Column("snake_case_value")
+    private String snake_case_value;
+    @Column("original_string")
+    private String testValue;
+    ...
+}
+```
+
 
 Example with JDBI
 -----------------
@@ -226,7 +259,8 @@ public class UserJdbiMapper implements ResultSetMapper<UserBean> {
 
 License
 -------
-Copyright &copy; 2014-2015 tamura shingo
+Copyright &copy; 2014-2016 tamura shingo
 Licensed under the [MIT License][MIT].
 
 [MIT]: http://www.opensource.org/licenses/mit-license.php
+
