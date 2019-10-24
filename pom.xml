@@ -2,12 +2,12 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>com.github.tamurashingo.dbutil3</groupId>
   <artifactId>dbutil3</artifactId>
-  <version>0.2.0</version>
+  <version>0.2.1</version>
   <name>dbutil3</name>
   <description>Database Connection Utility version 3</description>
 
   
-  <inceptionYear>2014, 2015</inceptionYear>
+  <inceptionYear>2014-2019</inceptionYear>
 
 
   <url>https://github.com/tamurashingo/dbutils3</url>
@@ -52,8 +52,9 @@
 
 
   <properties>
+    <java.version>1.8</java.version>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <jacoco.version>0.7.9</jacoco.version>
+    <jacoco.version>0.8.2</jacoco.version>
     <jacoco.include.package>com.*</jacoco.include.package>
   </properties>
 
@@ -99,10 +100,10 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>
-        <version>2.5.1</version>
+        <version>3.8.1</version>
         <configuration>
-          <source>1.7</source>
-          <target>1.7</target>
+          <source>${java.version}</source>
+          <target>${java.version}</target>
           <encoding>UTF-8</encoding>
         </configuration>
       </plugin>
@@ -201,7 +202,7 @@
         <version>2.10.1</version>
         <configuration>
           <show>package</show>
-          <source>1.7</source>
+          <source>${java.version}</source>
           <encoding>UTF-8</encoding>
           <docencoding>UTF-8</docencoding>
           <charset>UTF-8</charset>
@@ -228,7 +229,7 @@
         <version>2.10.1</version>
         <configuration>
           <show>package</show>
-          <source>1.7</source>
+          <source>${java.version}</source>
           <encoding>UTF-8</encoding>
           <docencoding>UTF-8</docencoding>
           <charset>UTF-8</charset>
@@ -260,6 +261,11 @@
       <groupId>org.antlr</groupId>
       <artifactId>antlr4-runtime</artifactId>
       <version>4.5</version>
+    </dependency>
+    <dependency>
+      <groupId>com.google.guava</groupId>
+      <artifactId>guava</artifactId>
+      <version>19.0</version>
     </dependency>
     <dependency>
       <groupId>junit</groupId>

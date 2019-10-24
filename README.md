@@ -27,7 +27,7 @@ add to pom.xml
 <dependency>
     <groupId>com.github.tamurashingo.dbutil3</groupId>
     <artifactId>dbutil3</artifactId>
-    <version>0.2.0</version>
+    <version>0.2.1</version>
 </dependency>
 ```
 
@@ -145,6 +145,40 @@ public class XXXXBean {
 }
 ```
 
+### AutoBinding ###
+We can use auto-binding feature.
+This feature generates Database Column Name from Bean Property name. (camel-case to snake-case)
+If property has column annotation, column value is used in priority.
+
+
+```java
+@AutoBiding
+public class TestBean {
+    private String testId;
+    private String camelCaseValue;
+    private String snake_case_value;
+    @Column("original_string")
+    private String testValue;
+    ...
+}
+```
+
+This code is equivalent to:
+
+```java
+public class TestBean {
+    @Column("test_id")
+    private String testId;
+    @Column("camel_case_value")
+    private String camelCaseValue;
+    @Column("snake_case_value")
+    private String snake_case_value;
+    @Column("original_string")
+    private String testValue;
+    ...
+}
+```
+
 
 Example with JDBI
 -----------------
@@ -223,7 +257,8 @@ public class UserJdbiMapper implements ResultSetMapper<UserBean> {
 
 License
 -------
-Copyright &copy; 2014-2015 tamura shingo
+Copyright &copy; 2014-2019 tamura shingo
 Licensed under the [MIT License][MIT].
 
 [MIT]: http://www.opensource.org/licenses/mit-license.php
+

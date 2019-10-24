@@ -1,7 +1,7 @@
 /*-
  * The MIT License (MIT)
  *
- * Copyright (c) 2014 tamura shingo
+ * Copyright (c) 2014, 2016 tamura shingo
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -34,6 +34,9 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
+
+import com.google.common.base.CaseFormat;
+
 import java.util.Set;
 
 /**
@@ -62,7 +65,8 @@ import java.util.Set;
  * <p>
  * generate following setter process.
  * </p>
- * <table summary="variables and generated AbstractSetters">
+ * <table>
+ *   <caption>variables and generated AbstractSetters</caption>
  *   <thead>
  *     <tr>
  *       <th>#</th>
@@ -115,14 +119,24 @@ public class Mapper {
      * @param cls Bean
      */
     public void createMapper(Class<?> cls) {
+        boolean autoBinding = cls.isAnnotationPresent(AutoBinding.class);
         for (Field field: cls.getDeclaredFields()) {
-            final Column column =  field.getAnnotation(Column.class);
+            Column column =  field.getAnnotation(Column.class);
+            String columnValue;
             if (column == null) {
-                continue;
+                if (autoBinding) {
+                    columnValue = CaseFormat.UPPER_CAMEL.to(CaseFormat.LOWER_UNDERSCORE, field.getName());
+                }
+                else {
+                    continue;
+                }
+            }
+            else {
+                columnValue = column.value();
             }
 
             try {
-                PropertyDescriptor pd = new PropertyDescriptor(field.getName(), cls);
+                PropertyDescriptor pd = new PropertyDescriptor((String)field.getName(), cls);
                 final Method setter = pd.getWriteMethod();
                 if (setter == null) {
                     continue;
@@ -155,7 +169,7 @@ public class Mapper {
                 else if (field.getType().equals(String.class)) {
                     invoker = new StringSetter(setter);
                 }
-                mapper.put(column.value(), invoker);
+                mapper.put(columnValue, invoker);
             }
             catch (IntrospectionException ex) {
                 // nothing to set when exception has occurred.
