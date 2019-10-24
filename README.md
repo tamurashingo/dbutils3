@@ -27,7 +27,7 @@ add to pom.xml
 <dependency>
     <groupId>com.github.tamurashingo.dbutil3</groupId>
     <artifactId>dbutil3</artifactId>
-    <version>0.2.1-SNAPSHOT</version>
+    <version>0.2.1</version>
 </dependency>
 ```
 
@@ -257,7 +257,7 @@ public class UserJdbiMapper implements ResultSetMapper<UserBean> {
 
 License
 -------
-Copyright &copy; 2014-2016 tamura shingo
+Copyright &copy; 2014-2019 tamura shingo
 Licensed under the [MIT License][MIT].
 
 [MIT]: http://www.opensource.org/licenses/mit-license.php

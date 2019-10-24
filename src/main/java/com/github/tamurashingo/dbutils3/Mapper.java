@@ -136,7 +136,7 @@ public class Mapper {
             }
 
             try {
-                PropertyDescriptor pd = new PropertyDescriptor(field.getName(), cls);
+                PropertyDescriptor pd = new PropertyDescriptor((String)field.getName(), cls);
                 final Method setter = pd.getWriteMethod();
                 if (setter == null) {
                     continue;
