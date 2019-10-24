@@ -65,7 +65,8 @@ import java.util.Set;
  * <p>
  * generate following setter process.
  * </p>
- * <table summary="variables and generated AbstractSetters">
+ * <table>
+ *   <caption>variables and generated AbstractSetters</caption>
  *   <thead>
  *     <tr>
  *       <th>#</th>
