@@ -4,5 +4,28 @@ jdk:
   - openjdk10
   - openjdk11
 
+env:
+  global:
+    - MYSQL_DBUSER=dbuser
+    - MYSQL_DBPASS=dbpass
+    - MYSQL_DBHOST=127.0.0.1
+    - MYSQL_DBPORT=3306
+    - MYSQL_DBNAME=dbutil
+    - POSGTRES_DBUSER=dbuser
+    - POSGTRES_DBPASS=dbpass
+    - POSGTRES_DBHOST=127.0.0.1
+    - POSGTRES_DBPORT=3306
+    - POSGTRES_DBNAME=dbutil
+
+services:
+  - mysql
+  - postgresql
+
+before_script:
+  - mysql -uroot -e 'GRANT ALL ON *.* TO dbuser@"localhost" IDENTIFIED BY "dbpass"'
+  - mysql -e 'CREATE DATABASE dbutil'
+  - psql -c 'create database "dbutil";' -U postgres
+  - psql -c "CREATE USER dbuser WITH PASSWORD 'dbpass';" -U postgres
+
 after_success:
   - mvn clean test jacoco:report coveralls:report
